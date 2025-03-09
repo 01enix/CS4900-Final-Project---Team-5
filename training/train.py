@@ -114,7 +114,7 @@ def train(learning_rate=0.001,num_epochs=20):
             outputs = net(inputs)
             loss = criterion(outputs, labels)
             loss.backward()
-            optimizer.step
+            optimizer.step()
             running_loss += loss.item()
 
         #caluculate average training loss 
