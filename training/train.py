@@ -12,11 +12,11 @@ import torchvision.transforms as T
 
 def get_train_val_loaders(batch=64, val=0.2,):
     """
-    This function will preprocess the data; creating batches of 64 and spliting the CIFAR-100 dataset into random subsets into 20% validation and 80% training 
+    This function will preprocess the data; creating mini batches of 64 and splitting the CIFAR-100 dataset into random subsets with 20% validation and 80% training 
 
     Args:
         batch (int): batch size (default 64)
-        val (float): Percentage of dataset to be used validation (default 20%)
+        val (float): Percentage of dataset to be used for validation (default 20%)
 
     Returns:
         DataLoaders for both training and validation
@@ -28,7 +28,7 @@ def get_train_val_loaders(batch=64, val=0.2,):
         T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
 
-    # Download/Initalize the dataset
+    # Download/Initialize the dataset
     data_set = torchvision.datasets.CIFAR100(root='./data', train=True, download=True, transform=transform_pipeline)
 
     # Create indices and shuffle for the SubsetRandonSampler()
@@ -53,7 +53,7 @@ def get_train_val_loaders(batch=64, val=0.2,):
 # Define timestamp to save models and logs
 timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
-#CNN model will will be using for training 
+#CNN model will be used for training 
 class Net(nn.Module):
     def __init__(self, num_classes):
         super().__init__()
@@ -77,7 +77,7 @@ class Net(nn.Module):
         x = self.fc3(x)
         return x
 
-def train(learning_rate=0.001,num_epochs=20,):
+def train(learning_rate=0.001,num_epochs=20):
     """
     This function trains the CNN model
 
@@ -92,7 +92,7 @@ def train(learning_rate=0.001,num_epochs=20,):
     # data loading
     train_loader, val_loader = get_train_val_loaders()
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")  #enable GPU if avaliable 
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")  #enables the use of a GPU if avaliable 
     net=Net().to(device)
 
     # create summary writer for tensorboard
@@ -120,8 +120,8 @@ def train(learning_rate=0.001,num_epochs=20,):
 
         #validation loop
         net.eval()          #ensure that dropout is turned off
-        total = 0           #tracks number of images processed
-        correct = 0         #tracks number of correct images predocted
+        total = 0           #tracks the number of images processed
+        correct = 0         #tracks the number of correct images predicted
         with torch.no_grad():
             for inputs, labels in val_loader:
                 inputs, labels = inputs.to(device), labels.to(device)
@@ -133,13 +133,13 @@ def train(learning_rate=0.001,num_epochs=20,):
         val_accuracy = 100 * correct / total
 
         #at the end of each epoch, print loss (training set) and accuracy (val set for B)
-        # save loss and / or accuracy after each epoch in the summary writer
+        # save loss and/or accuracy after each epoch in the summary writer
         print(f'Epoch [{epoch+1}/{num_epochs}], Training Loss: {avg_train_loss:.4f}, Validation Accuracy: {val_accuracy:.2f}%')
         writer.add_scalar('Loss/epoch_train', avg_train_loss, epoch)
         writer.add_scalar('Accuracy/val', val_accuracy, epoch)
 
     #save the model
-    model_save = f'cnn_cifar100_{timestamp}.pth' #save the model and places it in currect working directory
+    model_save = f'cnn_cifar100_{timestamp}.pth' #save the model and place it in current working directory
     torch.save(net.state_dict(), model_save)     #save parameters for model 
     print(f"Model saved to {model_save}")
 
