@@ -3,6 +3,8 @@ import datetime
 import numpy as np
 
 import torch
+import torchvision
+import torch.optim as optim
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, SubsetRandomSampler
@@ -93,7 +95,7 @@ def train(learning_rate=0.001,num_epochs=20):
     train_loader, val_loader = get_train_val_loaders()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")  #enables the use of a GPU if avaliable 
-    net=Net().to(device)
+    net=Net(num_classes=100).to(device)
 
     # create summary writer for tensorboard
     writer = SummaryWriter(log_dir=f'runs/cifar100_{timestamp}')
@@ -150,7 +152,8 @@ def train(learning_rate=0.001,num_epochs=20):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--epochs', type=int, default=20, help='number of epochs to train (default: 20)')
-    parser.add_argument('--lr', type=float, default=0.001, help='learning rate (default: 0.001)')  
+    parser.add_argument('--lr', type=float, default=0.001, help='learning rate (default: 0.001)')
+    args = parser.parse_args()
     train(learning_rate= args.lr, num_epochs = args.epochs)
 
 
