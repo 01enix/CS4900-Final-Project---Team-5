@@ -147,11 +147,11 @@ def train(learning_rate=0.001,num_epochs=20):
     writer.close()
 
     #allow adjusting of parameters 
-    if __name__ == '__main__':
-        parser = argparse.ArgumentParser()
-        parser.add_argument('--epochs', type=int, default=20, help='number of epochs to train (default: 20)')
-        parser.add_argument('--lr', type=float, default=0.001, help='learning rate (default: 0.001)')  
-        train(learning_rate= args.lr, num_epochs = args.epochs)
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--epochs', type=int, default=20, help='number of epochs to train (default: 20)')
+    parser.add_argument('--lr', type=float, default=0.001, help='learning rate (default: 0.001)')  
+    train(learning_rate= args.lr, num_epochs = args.epochs)
 
 
 
