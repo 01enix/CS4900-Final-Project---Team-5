@@ -3,6 +3,8 @@ import datetime
 import numpy as np
 
 import torch
+import torchvision
+import torch.optim as optim
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, SubsetRandomSampler
@@ -93,7 +95,7 @@ def train(learning_rate=0.001,num_epochs=20,):
     train_loader, val_loader = get_train_val_loaders()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")  #enable GPU if avaliable 
-    net=Net().to(device)
+    net=Net(num_classes=100).to(device)
 
     # create summary writer for tensorboard
     writer = SummaryWriter(log_dir=f'runs/cifar100_{timestamp}')
@@ -105,14 +107,14 @@ def train(learning_rate=0.001,num_epochs=20,):
     #training epochs loop from CNN_basics
     for epoch in range(num_epochs):
         net.train()
-        running_loss = 0.0
+        running_loss = 0.0  #used to track average training loss
         for i, (inputs, labels) in enumerate(train_loader):
             inputs, labels = inputs.to(device), labels.to(device)
             optimizer.zero_grad()
             outputs = net(inputs)
             loss = criterion(outputs, labels)
             loss.backward()
-            optimizer.step
+            optimizer.step()
             running_loss += loss.item()
 
         #caluculate average training loss 
@@ -120,22 +122,28 @@ def train(learning_rate=0.001,num_epochs=20,):
 
         #validation loop
         net.eval()          #ensure that dropout is turned off
+        val_loss =0.0       #used to track average validation loss
         total = 0           #tracks number of images processed
         correct = 0         #tracks number of correct images predocted
         with torch.no_grad():
             for inputs, labels in val_loader:
                 inputs, labels = inputs.to(device), labels.to(device)
                 outputs = net(inputs)
+                loss = criterion(outputs, labels)
+                val_loss += loss.item() * inputs.size(0)
                 _, predicted = torch.max(outputs.data, 1)
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
-        #calculate validation accuracy
+
+        #calculate validation loss/validation accuracy 
+        avg_val_loss = val_loss/len(val_loader)
         val_accuracy = 100 * correct / total
 
         #at the end of each epoch, print loss (training set) and accuracy (val set for B)
         # save loss and / or accuracy after each epoch in the summary writer
-        print(f'Epoch [{epoch+1}/{num_epochs}], Training Loss: {avg_train_loss:.4f}, Validation Accuracy: {val_accuracy:.2f}%')
+        print(f'Epoch [{epoch+1}/{num_epochs}], Training Loss: {avg_train_loss:.4f}, Validation Loss:{avg_val_loss:.4f},Validation Accuracy: {val_accuracy:.2f}%')
         writer.add_scalar('Loss/epoch_train', avg_train_loss, epoch)
+        writer.add_scalar("Loss/epoch_val", avg_val_loss, epoch)
         writer.add_scalar('Accuracy/val', val_accuracy, epoch)
 
     #save the model
@@ -147,16 +155,12 @@ def train(learning_rate=0.001,num_epochs=20,):
     writer.close()
 
     #allow adjusting of parameters 
-    if __name__ == '__main__':
-        parser = argparse.ArgumentParser()
-        parser.add_argument('--epochs', type=int, default=20, help='number of epochs to train (default: 20)')
-        parser.add_argument('--lr', type=float, default=0.001, help='learning rate (default: 0.001)')  
-        train(learning_rate= args.lr, num_epochs = args.epochs)
-
-
-
-
-
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--epochs', type=int, default=20, help='number of epochs to train (default: 20)')
+    parser.add_argument('--lr', type=float, default=0.001, help='learning rate (default: 0.001)')
+    args = parser.parse_args()  
+    train(learning_rate= args.lr, num_epochs = args.epochs)
            
 
 
