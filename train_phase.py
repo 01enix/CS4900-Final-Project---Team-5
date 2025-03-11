@@ -56,4 +56,7 @@ def train_phase(model, train_loader, criterion, optimizer, writer, epoch, schedu
 
    
     print(f"Epoch [{epoch+1}], Loss: {running_loss/len(train_loader):.4f}, "
-          f"Training Accuracy: {train_accuracy:.2f}%")
+          f"Training Accuracy: {train_accuracy:.2f}%") 
+    
+
+    tydytdytdtrdtr
