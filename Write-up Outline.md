@@ -6,16 +6,11 @@ Write a detailed analysis and observation of the development of the CIFAR-100 im
 Please describe the motivation of your project and why it’s worth doing.
 
 ## Problem Definition:
-- **What is the problem that you are addressing?**  
+- What is the problem that you are addressing?**  
   Provide details that specify whether you are fulfilling A, B, or C requirements.
-- **Who is the end user, and what is the end user profile?**
+- Who is the end user, and what is the end user profile?**
 
-Refer to a bit of information from the slides to talk about:
-- classification
-- why we want to do it automatically
-- why CNNs are used for this problem, and mention some classic CNNs used.
-
-Use References to make citations like it is done in papers. 
+- Refer to a bit of information from the slides to talk about classification, why we want to do it automatically, why CNNs are used for this problem, and mention some classic CNNs used. Use References to make citations like it is done in papers. 
 
 ## Introduction:
 - Introduce the need of the app.
