@@ -10,7 +10,10 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader, SubsetRandomSampler
 from torch.utils.tensorboard import SummaryWriter
 import torchvision.transforms as T
-from model_registry import models
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from Models.model_registry import models
 
 def get_train_val_loaders(batch=64, val=0.2,):
     """
