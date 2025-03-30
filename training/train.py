@@ -136,7 +136,7 @@ def train(model,learning_rate=0.001,num_epochs=20):
     #allow adjusting of parameters 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', type=str, default='Net', help='Choose model: Net')
+    parser.add_argument('--model', type=str, default='Net', help='Choose model: Net or LinearNet(default: Net)')
     parser.add_argument('--epochs', type=int, default=20, help='number of epochs to train (default: 20)')
     parser.add_argument('--lr', type=float, default=0.001, help='learning rate (default: 0.001)')
     args = parser.parse_args()
