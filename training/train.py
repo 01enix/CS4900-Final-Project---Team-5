@@ -10,7 +10,7 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader, SubsetRandomSampler
 from torch.utils.tensorboard import SummaryWriter
 import torchvision.transforms as T
-from models import models
+from model_registry import models
 
 def get_train_val_loaders(batch=64, val=0.2,):
     """
