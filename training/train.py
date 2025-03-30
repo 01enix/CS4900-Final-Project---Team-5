@@ -10,7 +10,7 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader, SubsetRandomSampler
 from torch.utils.tensorboard import SummaryWriter
 import torchvision.transforms as T
-
+from models import models
 
 def get_train_val_loaders(batch=64, val=0.2,):
     """
@@ -23,12 +23,6 @@ def get_train_val_loaders(batch=64, val=0.2,):
     Returns:
         DataLoaders for both training and validation
     """
-
-    # Normialize the pixel values 
-    transform_pipeline = T.Compose([
-        T.ToTensor(),
-        T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-    ])
 
     # Download/Initialize the dataset
     data_set = torchvision.datasets.CIFAR100(root='./data', train=True, download=True, transform=transform_pipeline)
@@ -55,35 +49,13 @@ def get_train_val_loaders(batch=64, val=0.2,):
 # Define timestamp to save models and logs
 timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
-#CNN model will be used for training 
-class Net(nn.Module):
-    def __init__(self, num_classes):
-        super().__init__()
-        self.conv1 = nn.Conv2d(3, 16, 3, padding='same')
-        self.conv2 = nn.Conv2d(16, 32, 3, padding='same')
-        self.pool = nn.MaxPool2d(2, 2)
-        self.conv3 = nn.Conv2d(32, 64, 3, padding='same')
-        self.fc1 = nn.Linear(1024, 512)
-        self.dropout = nn.Dropout(p=0.2)
-        self.fc2 = nn.Linear(512, 256)
-        self.fc3 = nn.Linear(256, num_classes)
 
-    def forward(self, x):
-        x = self.pool(F.relu(self.conv1(x)))
-        x = self.pool(F.relu(self.conv2(x)))
-        x = self.pool(F.relu(self.conv3(x)))
-        
-        x = torch.flatten(x, 1) # flatten all dimensions except batch
-        x = self.dropout(F.relu(self.fc1(x)))
-        x = F.relu(self.fc2(x))
-        x = self.fc3(x)
-        return x
-
-def train(learning_rate=0.001,num_epochs=20):
+def train(model,learning_rate=0.001,num_epochs=20):
     """
     This function trains the CNN model
 
     Args:
+        model: sets which CNN model will be used in the function 
         learning_rate: sets the learning rate which adjusts how much the model will adjust its weight during each iteration of training
         num_epochs: sets the number of iterations through the dataset for the model
 
@@ -96,7 +68,7 @@ def train(learning_rate=0.001,num_epochs=20):
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")  #enables the use of a GPU if avaliable 
     
-    net=Net(num_classes=100).to(device)
+    net = model(num_classes=100).to(device)
 
     # create summary writer for tensorboard
     writer = SummaryWriter(log_dir=f'runs/cifar100_{timestamp}')
@@ -160,8 +132,17 @@ def train(learning_rate=0.001,num_epochs=20):
     #allow adjusting of parameters 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('--model', type=str, default='Net', help='Choose model: Net')
     parser.add_argument('--epochs', type=int, default=20, help='number of epochs to train (default: 20)')
     parser.add_argument('--lr', type=float, default=0.001, help='learning rate (default: 0.001)')
+    args = parser.parse_args()
+    # initialize the model_name as str from CLI input /use lower() function to avoid case sensitivity issues
+    model_name = args.model.lower() 
 
-    args = parser.parse_args()  
-    train(learning_rate= args.lr, num_epochs = args.epochs)
+    #check to see if the provided arg is in the Dictionary of models
+    if model_name not in models:
+        raise ValueError(f"Model '{args.model}' not found. Available models: {list(models.keys())}")
+    #convert the str to model class and initialize it as "selected model"
+    selected_model = model_registry[model_name]
+
+    train(model=selected_model, learning_rate=args.lr, num_epochs=args.epochs)
