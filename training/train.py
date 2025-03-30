@@ -23,9 +23,13 @@ def get_train_val_loaders(batch=64, val=0.2,):
     Returns:
         DataLoaders for both training and validation
     """
+    #transform without normalization
+    transform = T.Compose([
+    T.ToTensor()
+    ])
 
     # Download/Initialize the dataset
-    data_set = torchvision.datasets.CIFAR100(root='./data', train=True, download=True, transform=transform_pipeline)
+    data_set = torchvision.datasets.CIFAR100(root='./data', train=True, download=True, transform=transform)
 
     # Create indices and shuffle for the SubsetRandonSampler()
     num_samples = len(data_set)
@@ -110,7 +114,7 @@ def train(model,learning_rate=0.001,num_epochs=20):
                 correct += (predicted == labels).sum().item()
 
         #calculate validation loss/validation accuracy 
-        avg_val_loss = val_loss/len(val_loader)
+        avg_val_loss = val_loss/total
         val_accuracy = 100 * correct / total
 
         #at the end of each epoch, print loss (training set) and accuracy (val set for B)
@@ -143,6 +147,6 @@ if __name__ == '__main__':
     if model_name not in models:
         raise ValueError(f"Model '{args.model}' not found. Available models: {list(models.keys())}")
     #convert the str to model class and initialize it as "selected model"
-    selected_model = model_registry[model_name]
+    selected_model = models[model_name]
 
     train(model=selected_model, learning_rate=args.lr, num_epochs=args.epochs)
