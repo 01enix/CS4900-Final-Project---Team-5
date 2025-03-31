@@ -18,8 +18,7 @@ def get_test_loader(batch=64):
     # For consistency, we will use the same preprocessing as used in training
     # Define the transformation pipeline for the test dataset
     transform_pipeline = T.Compose([
-        T.ToTensor(),
-        T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        T.ToTensor()
     ])
 
     # Load CIFAR-100 test dataset
