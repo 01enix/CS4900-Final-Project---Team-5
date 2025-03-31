@@ -1,3 +1,4 @@
+import argparse
 import torch
 import torchvision
 import torch.nn as nn
@@ -16,7 +17,6 @@ def get_test_loader(batch=64):
     Returns:
         DataLoader for the test dataset.
     """
-    # For consistency, we will use the same preprocessing as used in training
     # Define the transformation pipeline for the test dataset
     transform_pipeline = T.Compose([
         T.ToTensor(),
@@ -29,46 +29,70 @@ def get_test_loader(batch=64):
     # Initialize DataLoader
     test_loader = DataLoader(test_set, batch_size=batch, shuffle=False)
 
+    return test_loader
+
+def test(model, model_path, batch_size=64):
+    """
+    In this function we use the test data on the CNN model on the CIFAR-100 dataset.
+
+    Args:
+        model: the CNN model to be tested
+        model_path: path to the trained model
+        batch_size: batch size for testing (default 64)
+    """
+
+    test_loader = get_test_loader(batch=batch_size)
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    net = model(num_classes=100).to(device)
+
     # network and trained model loading
-    num_classes = 100  # CIFAR-100 has 100 classes
-    net = Net(num_classes=num_classes)
-    net.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
-    
+    net.load_state_dict(torch.load(model_path, map_location=device))
+    net.eval()
+
     correct = 0
     total = 0
-    correct_pred = {classname: 0 for classname in range(num_classes)}  # Assuming CIFAR-100 classes are 0 to 99
-    total_pred = {classname: 0 for classname in range(num_classes)}
+    correct_pred = {classname: 0 for classname in range(100)}  
+    total_pred = {classname: 0 for classname in range(100)}
     
     # evaluate the model without gradients
     with torch.no_grad():
-        for data in test_loader:
-            images, labels = data
-            outputs = net(images)
+        for inputs, labels in test_loader:
+            inputs, labels = inputs.to(device), labels.to(device)
+            outputs = net(inputs)
             _, predicted = torch.max(outputs, 1)
-            
+
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
-            
-            # Update per-class metrics
+
+            # update the accuracy per class
             for label, prediction in zip(labels, predicted):
                 correct_pred[label.item()] += (label == prediction).item()
                 total_pred[label.item()] += 1
 
     # overall accuracy
-    print(f'Accuracy of the network on the 10000 test images: {100 * correct // total} %')
-    
-    # accuracy for each class
-    for classname in range(num_classes):
-        accuracy = 100 * correct_pred[classname] / total_pred[classname]
-        print(f'Accuracy for class {classname}: {accuracy:.1f} %')
+    accuracy = 100 * correct / total
+    print(f'Accuracy of the network on the 10000 test images: {accuracy:.2f}%')
 
-    
+    # accuracy per class
+    for classname in range(100):
+        class_accuracy = 100 * correct_pred[classname] / total_pred[classname]
+        print(f'Accuracy for class {classname}: {class_accuracy:.1f}%')
+
 
 if __name__ == '__main__':
-    # specify the path to the model saved after training
-    model_path = './cnn_cifar100_20250322-163000.pth'  # Change to your actual path
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--model', type=str, default='Net', help='Choose model: Net or LinearNet (default: Net)')
+    parser.add_argument('--batch_size', type=int, default=64, help='Batch size for testing (default: 64)')
+    parser.add_argument('--model_path', type=str, required=True, help='Path to the trained model')
+    args = parser.parse_args()
 
-    # run the test function with this model path
-    test(batch=64, model_path=model_path)
+    # get the model based on the argument
+    model_name = args.model.lower()
+    if model_name not in models:
+        raise ValueError(f"Model '{args.model}' not found. Available models: {list(models.keys())}")
+    
+    selected_model = models[model_name]
 
-    return test_loader
+    # test the model
+    test(model=selected_model, model_path=args.model_path, batch_size=args.batch_size)
