@@ -4,7 +4,8 @@ import torch.nn.functional as F
 
 
 class LinearNet(nn.Module):
-    def __init__(self, input_size, num_classes):
+    def __init__(self, num_classes):
+        input_size = 3072  # 32x32x3 for CIFAR-100
         super().__init__()
         self.fc1 = nn.Linear(input_size, 512)
         self.dropout = nn.Dropout(p=0.2)
