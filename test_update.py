@@ -7,7 +7,6 @@ from sklearn.metrics import (
     f1_score
 )
 
-
 # 5) Per-class and mean accuracy
 cm = confusion_matrix(all_labels, all_preds)
 per_class_acc = cm.diagonal() / cm.sum(axis=1)  # diag / row_sum
