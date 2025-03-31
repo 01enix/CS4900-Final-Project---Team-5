@@ -114,7 +114,7 @@ def train(model,learning_rate=0.001,num_epochs=20):
                 correct += (predicted == labels).sum().item()
 
         #calculate validation loss/validation accuracy 
-        avg_val_loss = val_loss/total
+        avg_val_loss = val_loss/len(val_loader)
         val_accuracy = 100 * correct / total
 
         #at the end of each epoch, print loss (training set) and accuracy (val set for B)
