@@ -78,7 +78,7 @@ def train(model,learning_rate=0.001,num_epochs=20):
     writer = SummaryWriter(log_dir=f'runs/cifar100_{timestamp}')
 
     #define optimizer and loss - DNN_basics - Slide 17
-    optimizer = optim.Adam(net.parameters(), lr=learning_rate)
+    optimizer = optim.SGD(net.parameters(), lr=learning_rate)
     criterion = nn.CrossEntropyLoss()
 
     #training epochs loop from CNN_basics
