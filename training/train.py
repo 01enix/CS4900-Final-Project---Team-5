@@ -10,16 +10,26 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader, SubsetRandomSampler
 from torch.utils.tensorboard import SummaryWriter
 import torchvision.transforms as T
-from model_registry import models
+from cnn_model import Net
+from Linearnet import Linearnet
 
-def get_train_val_loaders(batch=64, val=0.2,):
+# enable the switching between cifar classes
+class CIFAR_class_switch(torchvision.datasets.CIFAR100):
+    def __init__(self, class_type='100', *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if class_type == '20':
+            self.targets = self.coarse_labels
+        else:
+            self.targets = self.targets
+        
+def get_train_val_loaders(batch=64, val=0.2,class_type='100'):
     """
     This function will preprocess the data; creating mini batches of 64 and splitting the CIFAR-100 dataset into random subsets with 20% validation and 80% training 
 
     Args:
-        batch (int): batch size (default 64)
-        val (float): Percentage of dataset to be used for validation (default 20%)
-
+        batch: batch size (default 64)
+        val: Percentage of dataset to be used for validation (default 20%)
+        class_type(str): '100' or '20', used to select which labels are used from the cifar dataset
     Returns:
         DataLoaders for both training and validation
     """
@@ -29,7 +39,7 @@ def get_train_val_loaders(batch=64, val=0.2,):
     ])
 
     # Download/Initialize the dataset
-    data_set = torchvision.datasets.CIFAR100(root='./data', train=True, download=True, transform=transform)
+    data_set = CIFAR_class_switch(root='./data', train=True, download=True, transform=transform, class_type=class_type)
 
     # Create indices and shuffle for the SubsetRandonSampler()
     num_samples = len(data_set)
@@ -54,31 +64,34 @@ def get_train_val_loaders(batch=64, val=0.2,):
 timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
 
-def train(model,learning_rate=0.001,num_epochs=20):
+def train(model,learning_rate=0.001,num_epochs=20,class_type='100'):
     """
     This function trains the CNN model
 
     Args:
         model: sets which CNN model will be used in the function 
-        learning_rate: sets the learning rate which adjusts how much the model will adjust its weight during each iteration of training
-        num_epochs: sets the number of iterations through the dataset for the model
+        learning_rate: sets the learning rate which adjusts how much the model will adjust its weight during each iteration of training(default 0.001)
+        num_epochs: sets the number of iterations through the dataset for the model(default(20)
+        class_type(str): '100' or '20', used to select which labels are used from the cifar dataset(defualt 100)
 
     Returns:
-        Lists of training and validation losses per epoch.
+        Lists of training, accuracy, and validation losses per epoch.
 
     """
     # data loading
-    train_loader, val_loader = get_train_val_loaders()
+    train_loader, val_loader = get_train_val_loaders(class_type=class_type)
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")  #enables the use of a GPU if avaliable 
+    #enable GPU (CUDA) usage
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
-    net = model(num_classes=100).to(device)
+    num_classes = 100 if class_type == '100' else 20
+    net = model(num_classes=num_classes).to(device)
 
     # create summary writer for tensorboard
-    writer = SummaryWriter(log_dir=f'runs/cifar100_{timestamp}')
+    writer = SummaryWriter(log_dir=f'runs/cifar100{class_type}_{timestamp}')
 
     #define optimizer and loss - DNN_basics - Slide 17
-    optimizer = optim.Adam(net.parameters(), lr=learning_rate)
+    optimizer = optim.SGD(net.parameters(), lr=learning_rate)
     criterion = nn.CrossEntropyLoss()
 
     #training epochs loop from CNN_basics
@@ -114,7 +127,7 @@ def train(model,learning_rate=0.001,num_epochs=20):
                 correct += (predicted == labels).sum().item()
 
         #calculate validation loss/validation accuracy 
-        avg_val_loss = val_loss/total
+        avg_val_loss = val_loss/len(val_loader)
         val_accuracy = 100 * correct / total
 
         #at the end of each epoch, print loss (training set) and accuracy (val set for B)
@@ -126,7 +139,7 @@ def train(model,learning_rate=0.001,num_epochs=20):
         writer.add_scalar('Accuracy/val', val_accuracy, epoch)
 
     #save the model
-    model_save = f'cnn_cifar100_{timestamp}.pth' #save the model and place it in current working directory
+    model_save = f'cnn_cifar100_{timestamp}.pth' #save the model and place it in the current working directory
     torch.save(net.state_dict(), model_save)     #save parameters for model 
     print(f"Model saved to {model_save}")
 
@@ -136,17 +149,18 @@ def train(model,learning_rate=0.001,num_epochs=20):
     #allow adjusting of parameters 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('--class_type', type=str, default='100', choices=['100', '20'],help="Choose number of output classes: '100' for class or '20' for superclasses (default: 100)")
     parser.add_argument('--model', type=str, default='Net', help='Choose model: Net or LinearNet(default: Net)')
     parser.add_argument('--epochs', type=int, default=20, help='number of epochs to train (default: 20)')
     parser.add_argument('--lr', type=float, default=0.001, help='learning rate (default: 0.001)')
     args = parser.parse_args()
-    # initialize the model_name as str from CLI input /use lower() function to avoid case sensitivity issues
-    model_name = args.model.lower() 
 
-    #check to see if the provided arg is in the Dictionary of models
-    if model_name not in models:
-        raise ValueError(f"Model '{args.model}' not found. Available models: {list(models.keys())}")
-    #convert the str to model class and initialize it as "selected model"
-    selected_model = models[model_name]
+    # turn string into model class
+    if args.model.lower() == 'net':
+        selected_model = Net
+    elif args.model.lower() == 'linearnet':
+        selected_model = LinearNet
+    else:
+        raise ValueError("Model must be 'Net' or 'LinearNet'")
 
-    train(model=selected_model, learning_rate=args.lr, num_epochs=args.epochs)
+    train(model=selected_model, learning_rate=args.lr, num_epochs=args.epochs,class_type=args.class_type)
