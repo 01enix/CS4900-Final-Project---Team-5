@@ -7,8 +7,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
 import torchvision.transforms as T
-from torchvision import transforms as tv_transforms  # for predict_images
+from torchvision import transforms as tv_transforms  
 from model_registry import models
+from sklearn.metrics import precision_score, recall_score, f1_score
 
 def get_test_loader(batch=64):
     """
@@ -60,9 +61,36 @@ def test(model, model_path, batch_size=64):
 
     accuracy = 100 * correct / total
     print(f'Accuracy on the 10000 test images: {accuracy:.2f}%')
+
+    #Comput per-class accuracy 
     for classname in range(100):
         class_accuracy = 100 * correct_pred[classname] / total_pred[classname]
         print(f'Accuracy for class {classname}: {class_accuracy:.1f}%')
+    #Compute mean accuracy
+    class_accuracies = [100 * correct_pred[c] / total_pred[c] for c in range(100)]
+    mean_accuracy = sum(class_accuracies) / len(class_accuracies)
+    print(f'Mean Accuracy across all classes: {mean_accuracy:.2f}%')
+
+    #Compute Precision, Recall, F1-score 
+    y_true = []
+    y_pred = []
+
+    with torch.no_grad():
+        for inputs, labels in test_loader:
+            inputs, labels = inputs.to(device), labels.to(device)
+            outputs = net(inputs)
+            _, predicted = torch.max(outputs, 1)
+            y_true.extend(labels.cpu().numpy())
+            y_pred.extend(predicted.cpu().numpy())
+
+    precision = precision_score(y_true, y_pred, average=None, labels=range(100))
+    recall = recall_score(y_true, y_pred, average=None, labels=range(100))
+    f1 = f1_score(y_true, y_pred, average=None, labels=range(100))
+
+    print("\nPer-class Precision, Recall, and F1-score:")
+    for classname in range(100):
+        print(f'Class {classname:2d} - Precision: {precision[classname]:.2f}, Recall: {recall[classname]:.2f}, F1-score: {f1[classname]:.2f}')
+
 
 def predict_images(model, model_path, image_directory):
     """
@@ -80,7 +108,6 @@ def predict_images(model, model_path, image_directory):
 
     # Define the preprocessing pipeline matching your training
     transform_pipeline = tv_transforms.Compose([
-        tv_transforms.Resize((224, 224)),
         tv_transforms.ToTensor(),
         tv_transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
