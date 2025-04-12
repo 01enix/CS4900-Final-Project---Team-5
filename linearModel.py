@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-class EnhancedNet(nn.Module):
+class LinearNet(nn.Module):
     def __init__(self, num_classes):
         input_size = 3072  # 32x32x3 for CIFAR-100
         super().__init__()
