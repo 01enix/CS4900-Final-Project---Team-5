@@ -51,6 +51,26 @@ mapping_C_F = {
 }
 
 def new_dicts():
+    """
+    Constructs and returns mappings between fine and coarse labels.
+
+    This function builds several dictionaries that map:
+    - fine label names to IDs and vice versa,
+    - coarse label names to IDs and vice versa,
+    - fine labels to their corresponding coarse labels,
+    - fine label IDs to coarse label IDs,
+    - coarse label IDs to a list of fine label IDs they contain.
+
+    Returns:
+        dict: A dictionary containing the following mappings:
+            - 'fine_id' (dict): Maps fine label names to integer IDs.
+            - 'id_fine' (dict): Maps fine label IDs to their label names.
+            - 'coarse_id' (dict): Maps coarse label names to integer IDs.
+            - 'id_coarse' (dict): Maps coarse label IDs to their label names.
+            - 'fine_coarse' (dict): Maps each fine label name to its coarse label name.
+            - 'fine_id_coarse_id' (dict): Maps fine label IDs to their corresponding coarse label IDs.
+            - 'coarse_id_fine_id' (dict): Maps coarse label IDs to a list of fine label IDs.
+    """
     # Build the necessary mappings between fine and coarse labels
     fine_id = dict()
     id_fine = dict()
