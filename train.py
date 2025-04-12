@@ -11,7 +11,8 @@ from torch.utils.data import DataLoader, SubsetRandomSampler
 from torch.utils.tensorboard import SummaryWriter
 import torchvision.transforms as T
 from cnn_model import Net
-from Linearnet import Linearnet
+from linearModel import LinearNet
+
 
 # enable the switching between cifar classes
 class CIFAR_class_switch(torchvision.datasets.CIFAR100):
@@ -24,12 +25,12 @@ class CIFAR_class_switch(torchvision.datasets.CIFAR100):
         
 def get_train_val_loaders(batch=64, val=0.2,class_type='100'):
     """
-    This function will preprocess the data; creating mini batches of 64 and splitting the CIFAR-100 dataset into random subsets with 20% validation and 80% training 
+    This function will preprocess the data, creating mini-batches of 64 and splitting the CIFAR-100 dataset into random subsets with 20% validation and 80% training 
 
     Args:
         batch: batch size (default 64)
         val: Percentage of dataset to be used for validation (default 20%)
-        class_type(str): '100' or '20', used to select which labels are used from the cifar dataset
+        class_type(str): '100' or '20', used to select which labels are used from the CIFAR dataset
     Returns:
         DataLoaders for both training and validation
     """
@@ -70,9 +71,9 @@ def train(model,learning_rate=0.001,num_epochs=20,class_type='100'):
 
     Args:
         model: sets which CNN model will be used in the function 
-        learning_rate: sets the learning rate which adjusts how much the model will adjust its weight during each iteration of training(default 0.001)
-        num_epochs: sets the number of iterations through the dataset for the model(default(20)
-        class_type(str): '100' or '20', used to select which labels are used from the cifar dataset(defualt 100)
+        learning_rate: sets the learning rate, which adjusts how much the model will adjust its weight during each iteration of training(default 0.001)
+        num_epochs: sets the number of iterations through the dataset for the model(default 20)
+        class_type(str): '100' or '20', used to select which labels are used from the CIFAR dataset(default 100)
 
     Returns:
         Lists of training, accuracy, and validation losses per epoch.
