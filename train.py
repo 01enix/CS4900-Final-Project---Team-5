@@ -10,7 +10,7 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader, SubsetRandomSampler
 from torch.utils.tensorboard import SummaryWriter
 import torchvision.transforms as T
-from cnn_model import Net
+from model import Net
 from linearModel import LinearNet
 
 
