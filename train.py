@@ -98,7 +98,10 @@ def train(model,learning_rate=0.001,num_epochs=20,class_type='100'):
     #training epochs loop from CNN_basics
     for epoch in range(num_epochs):
         net.train()
-        running_loss = 0.0  #used to track average training loss
+        running_loss = 0.0  
+        train_correct = 0
+        train_total = 0
+        
         for i, (inputs, labels) in enumerate(train_loader):
             inputs, labels = inputs.to(device), labels.to(device)
             optimizer.zero_grad()
