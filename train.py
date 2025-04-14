@@ -123,7 +123,7 @@ def train(model,learning_rate=0.001,num_epochs=20,class_type='100'):
                 inputs, labels = inputs.to(device), labels.to(device)
                 outputs = net(inputs)
                 loss = criterion(outputs, labels)
-                val_loss += loss.item() * input.size(0)
+                val_loss += loss.item() * inputs.size(0)
                 _, predicted = torch.max(outputs.data, 1)
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
