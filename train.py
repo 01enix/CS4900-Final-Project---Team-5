@@ -110,6 +110,9 @@ def train(model,learning_rate=0.001,num_epochs=20,class_type='100'):
             loss.backward()
             optimizer.step()
             running_loss += loss.item()
+            _, predicted = torch.max(outputs.data, 1)
+            train_total += labels.size(0)
+            train_correct += (predicted == labels).sum().item()
 
         #caluculate average training loss 
         avg_train_loss = running_loss / len(train_loader)
@@ -126,13 +129,13 @@ def train(model,learning_rate=0.001,num_epochs=20,class_type='100'):
                 inputs, labels = inputs.to(device), labels.to(device)
                 outputs = net(inputs)
                 loss = criterion(outputs, labels)
-                val_loss += loss.item() * inputs.size(0)
+                val_loss += loss.item()
                 _, predicted = torch.max(outputs.data, 1)
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
 
         #calculate validation loss/validation accuracy 
-        avg_val_loss = val_loss / total
+        avg_val_loss = val_loss / len(train_loader)
         val_accuracy = 100 * correct / total
 
         #at the end of each epoch, print loss (training set) and accuracy (val set for B)
