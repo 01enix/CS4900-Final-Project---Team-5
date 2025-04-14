@@ -110,6 +110,7 @@ def train(model,learning_rate=0.001,num_epochs=20,class_type='100'):
 
         #caluculate average training loss 
         avg_train_loss = running_loss / len(train_loader)
+        train_accuracy = 100 * train_correct / train_total
 
         #validation loop
         net.eval()          #ensure that dropout is turned off
@@ -128,7 +129,7 @@ def train(model,learning_rate=0.001,num_epochs=20,class_type='100'):
                 correct += (predicted == labels).sum().item()
 
         #calculate validation loss/validation accuracy 
-        avg_val_loss = val_loss/len(val_loader)
+        avg_val_loss = val_loss / total
         val_accuracy = 100 * correct / total
 
         #at the end of each epoch, print loss (training set) and accuracy (val set for B)
