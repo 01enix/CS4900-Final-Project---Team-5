@@ -7,10 +7,13 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
 import torchvision.transforms as T
-from torchvision import transforms as tv_transforms  
-from model_registry import models
+from torchvision import transforms as tv_transforms
 from sklearn.metrics import precision_score, recall_score, f1_score
 import pprint as pp
+from model import Net
+from linearModel import LinearNet
+
+
 
 #100 labels for fine CIFAR-100 date
 fine_labels = [
@@ -291,10 +294,13 @@ if __name__ == '__main__':
     parser.add_argument('--image_directory', type=str, default=None, help='Directory with images for prediction')
     args = parser.parse_args()
 
-    model_name = args.model.lower()
-    if model_name not in models:
-        raise ValueError(f"Model '{args.model}' not found. Available models: {list(models.keys())}")
-    selected_model = models[model_name]
+# Turn string into model class
+    if args.model.lower() == 'net':
+        selected_model = Net
+    elif args.model.lower() == 'linearnet':
+        selected_model = LinearNet
+    else:
+        raise ValueError("Model must be 'Net' or 'LinearNet'")
 
     # If an image directory is provided, run image predictions; otherwise, run CIFAR-100 tests.
     if args.image_directory:
