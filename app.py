@@ -41,6 +41,12 @@ cifar = CIFAR100WithCoarse(root='./data', train=False)
 fine_labels = cifar.classes
 coarse_labels = cifar.coarse_label_names
 
+# Build fine-to-coarse mapping manually using the official CIFAR-100 meta file
+with open('./data/cifar-100-python/train', 'rb') as f:
+    train_data = pickle.load(f, encoding='bytes')
+    fine_labels_list = train_data[b'fine_labels']
+    coarse_labels_list = train_data[b'coarse_labels']
+
 #image transform
 transform = transforms.Compose([
     transforms.ToTensor()
@@ -64,11 +70,10 @@ def predict_image(path):
         pred_class_id = torch.argmax(probs, dim=1).item()
 
     pred_class_name = fine_labels[pred_class_id]
-    pred_superclass_id = pred_class_id // 5
-    super_class_name = coarse_labels[pred_superclass_id]
+    super_class_name = fine_to_coarse_dict[pred_class_id]
 
-    result_label.config(
-        text=f"Prediction: {pred_class_name.replace('_', ' ').title()}\nSuper-Class: {super_class_name.title()}"
+    result_text = f"{super_class_name} \n {pred_class_name}"
+    result_label.config(text=result_text)
     )
 
 #image loader
@@ -80,8 +85,7 @@ def open_image():
     """
     file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.jpg;*.jpeg;*.png")])
     if file_path:
-        img = Image.open(file_path)
-        img.thumbnail((600, 600), Image.ANTIALIAS)
+        img = Image.open(file_path).resize((400,300))
         img_tk = ImageTk.PhotoImage(img)
         image_label.config(image=img_tk)
         image_label.image = img_tk
