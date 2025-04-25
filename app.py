@@ -63,8 +63,9 @@ def predict_image(path):
         probs = torch.softmax(outputs, dim=1)
         pred_class_id = torch.argmax(probs, dim=1).item()
 
-    pred_class_name = id_to_fine[pred_class_id]
-    super_class_name = fine_to_coarse[pred_class_name]
+    pred_class_name = fine_labels[pred_class_id]
+    pred_superclass_id = pred_class_id // 5
+    super_class_name = coarse_labels[pred_superclass_id]
 
     result_label.config(
         text=f"Prediction: {pred_class_name.replace('_', ' ').title()}\nSuper-Class: {super_class_name.title()}"
