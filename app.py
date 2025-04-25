@@ -48,6 +48,11 @@ with open('./data/cifar-100-python/train', 'rb') as f:
     fine_labels_list = train_data[b'fine_labels']
     coarse_labels_list = train_data[b'coarse_labels']
 
+fine_to_coarse_dict = {}
+for fine, coarse in zip(fine_labels_list, coarse_labels_list):
+    if fine not in fine_to_coarse_dict:
+        fine_to_coarse_dict[fine] = coarse_labels[coarse]
+
 #image transform
 transform = transforms.Compose([
     transforms.ToTensor()
