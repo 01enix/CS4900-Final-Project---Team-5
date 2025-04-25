@@ -74,7 +74,7 @@ def predict_image(path):
 
     result_text = f"{super_class_name} \n {pred_class_name}"
     result_label.config(text=result_text)
-    )
+    
 
 #image loader
 def open_image():
