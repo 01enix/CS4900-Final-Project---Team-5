@@ -94,6 +94,7 @@ def main():
     global result_label, image_label
 
     root = tk.Tk()
+    root.state('zoomed')
     root.title("Image Classifier")
 
     open_button = tk.Button(root, text="Open Image", command=open_image)
