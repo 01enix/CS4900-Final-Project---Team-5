@@ -7,6 +7,7 @@ import argparse
 from model import Net
 from torchvision.datasets import CIFAR100
 import os
+import pickle
 
 # Subclass to expose coarse label names
 class CIFAR100WithCoarse(CIFAR100):
