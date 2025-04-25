@@ -80,7 +80,8 @@ def open_image():
     """
     file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.jpg;*.jpeg;*.png")])
     if file_path:
-        img = Image.open(file_path).resize((400, 300))
+        img = Image.open(file_path)
+        img.thumbnail((600, 600), Image.ANTIALIAS)
         img_tk = ImageTk.PhotoImage(img)
         image_label.config(image=img_tk)
         image_label.image = img_tk
