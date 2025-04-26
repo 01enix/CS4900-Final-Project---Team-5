@@ -14,28 +14,13 @@ from model import Net
 from linearModel import LinearNet
 
 
-
-#100 labels for fine CIFAR-100 date
-fine_labels = [
-    'apple', 'aquarium_fish', 'orange', 'orchid', 'poppy', 'banana', 'peach', 'pear', 'sweet_pepper', 'potato',
-    'bee', 'beetle', 'butterfly', 'caterpillar', 'cockroach', 'clock', 'computer_keyboard', 'lamp', 'telephone', 'television',
-    'bed', 'chair', 'couch', 'table', 'wardrobe', 'fox', 'porcupine', 'possum', 'raccoon', 'skunk',
-    'baby', 'boy', 'girl', 'man', 'woman', 'crocodile', 'dinosaur', 'lizard', 'snake', 'turtle',
-    'bicycle', 'bus', 'motorcycle', 'pickup_truck', 'train', 'bridge', 'castle', 'house', 'road', 'skyscraper',
-    'cloud', 'forest', 'mountain', 'plain', 'sea', 'camel', 'cattle', 'chimpanzee', 'elephant', 'kangaroo',
-    'hamster', 'mouse', 'rabbit', 'shrew', 'squirrel', 'bear', 'leopard', 'lion', 'tiger', 'wolf',
-    'beaver', 'dolphin', 'otter', 'seal', 'whale', 'flatfish', 'ray', 'shark', 'trout', 'sunflower',
-    'rose', 'tulip', 'maple_tree', 'oak_tree', 'palm_tree', 'pine_tree', 'willow_tree', 'lawn_mower',
-    'rocket', 'streetcar', 'tank', 'tractor', 'bowl', 'can', 'cup', 'plate', 'bottle'
-]
-
 #Coarse and Fine label mapping
 mapping_C_F = {
     'aquatic mammals': ['beaver', 'dolphin', 'otter', 'seal', 'whale'],
     'fish': ['aquarium_fish', 'flatfish', 'ray', 'shark', 'trout'],
     'flowers': ['orchid', 'poppy', 'rose', 'sunflower', 'tulip'],
     'food containers': ['bottle', 'bowl', 'can', 'cup', 'plate'],
-    'fruit and vegetables': ['apple', 'mushroom', 'orange', 'pear', 'sweet_pepper'],
+    'fruit and vegetables': ['apple', 'mushroom', 'orange', 'pear', 'sweet_pepper', 'banana', 'peach', 'potato'],
     'household electrical device': ['clock', 'computer_keyboard', 'lamp', 'telephone', 'television'],
     'household furniture': ['bed', 'chair', 'couch', 'table', 'wardrobe'],
     'insects': ['bee', 'beetle', 'butterfly', 'caterpillar', 'cockroach'],
@@ -52,6 +37,8 @@ mapping_C_F = {
     'vehicles 1': ['bicycle', 'bus', 'motorcycle', 'pickup_truck', 'train'],
     'vehicles 2': ['lawn_mower', 'rocket', 'streetcar', 'tank', 'tractor'],
 }
+
+fine_labels = [label for labels in mapping_C_F.values() for label in labels]
 
 def new_dicts():
     """
@@ -80,6 +67,8 @@ def new_dicts():
     for id, label in enumerate(fine_labels):
         fine_id[label] = id
         id_fine[id] = label
+
+    
 
     coarse_id = dict()
     id_coarse = dict()
@@ -125,6 +114,14 @@ def get_test_loader(batch=64, class_type='100'):
     Returns:
         A tuple (DataLoader, class_names) for test set evaluation.
     """
+
+    # Define the preprocessing pipeline matching your training
+    transform_pipeline = tv_transforms.Compose([tv_transforms.ToTensor(), tv_transforms.Normalize(mean=[0.5071, 0.4865, 0.4409], std=[0.2673, 0.2564, 0.2762])])
+
+    # Load CIFAR-100 dataset
+    cifar_data = torchvision.datasets.CIFAR100(root='./data', train=False)
+
+    # Set class names depending on the class type
     if class_type == '100':
         # Use CIFAR-100 fine labels
         test_set = torchvision.datasets.CIFAR100(root='./data', train=False, download=True, transform=transform_pipeline)
@@ -138,8 +135,11 @@ def get_test_loader(batch=64, class_type='100'):
     else:
         raise ValueError(f"Unsupported class_type: {class_type}. Choose '100' or '20'.")
 
+    # DataLoader for test set
     test_loader = DataLoader(test_set, batch_size=batch, shuffle=False)
-    return test_loader
+    
+    return test_loader, class_names  # Now returning both test_loader and class_names
+
 
 def test(model, model_path, batch_size=64, class_type='100'):
     """
@@ -225,8 +225,9 @@ def test(model, model_path, batch_size=64, class_type='100'):
     id_coarse = label_maps['id_coarse']
 
     #Map fine predictions to superclasses
-    y_true_coarse = [fine_id_coarse_id[y] for y in y_true]
-    y_pred_coarse = [fine_id_coarse_id[p] for p in y_pred]
+    y_true_coarse = [fine_id_coarse_id[int(y)] for y in y_true]
+    y_pred_coarse = [fine_id_coarse_id[int(p)] for p in y_pred]
+
 
     precision_c = precision_score(y_true_coarse, y_pred_coarse, average=None, labels=range(20))
     recall_c = recall_score(y_true_coarse, y_pred_coarse, average=None, labels=range(20))
@@ -247,6 +248,20 @@ def test(model, model_path, batch_size=64, class_type='100'):
     print(f"Macro Recall:    {macro_r:.4f}")
     print(f"Macro F1 Score:  {macro_f1:.4f}")
 
+def model_loader(model_name, model_path, ground_truth):
+    num_classes = 100 if ground_truth == 'fine' else 20
+
+    if model_name.lower() == 'net':
+        model = Net(num_classes)
+    elif model_name.lower() == 'linearnet':
+        model = LinearNet(num_classes)
+    else:
+        raise ValueError("Unsupported model type. Choose 'Net' or 'LinearNet'")
+    
+    model.load_state_dict(torch.load(model_path, map_location='cpu'))  # Adjust for GPU or CPU
+    model.eval()
+    return model
+
 def predict_images(model, model_path, image_directory, class_type='100'):
     """
     Run inference on a set of images in a directory using the specified model.
@@ -264,11 +279,6 @@ def predict_images(model, model_path, image_directory, class_type='100'):
     net.load_state_dict(torch.load(model_path, map_location=device))
     net.eval()
 
-    # Define the preprocessing pipeline matching your training
-    transform_pipeline = tv_transforms.Compose([tv_transforms.ToTensor()])
-
-    cifar_data = torchvision.datasets.CIFAR100(root='./data', train=False)
-    class_names = cifar_data.classes if class_type == '100' else cifar_data.coarse_label_names
 
     print(f"\nPredicting on images in '{image_directory}' using class type {class_type} ({num_classes} classes)...\n")
         
@@ -292,18 +302,13 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int, default=64, help='Batch size for testing (default: 64)')
     parser.add_argument('--model_path', type=str, required=True, help='Path to the trained model')
     parser.add_argument('--image_directory', type=str, default=None, help='Directory with images for prediction')
+    parser.add_argument('--ground_truth', type=str, default='fine', choices=['fine', 'coarse'], help='Specify label type the model was trained on: fine (100 classes) or coarse (20 superclasses)')
     args = parser.parse_args()
 
-# Turn string into model class
-    if args.model.lower() == 'net':
-        selected_model = Net
-    elif args.model.lower() == 'linearnet':
-        selected_model = LinearNet
-    else:
-        raise ValueError("Model must be 'Net' or 'LinearNet'")
+    model = model_loader(args.model, args.model_path, args.ground_truth)
 
     # If an image directory is provided, run image predictions; otherwise, run CIFAR-100 tests.
     if args.image_directory:
-        predict_images(selected_model, args.model_path, args.image_directory)
+        predict_images(model, args.model_path, args.image_directory, class_type='100' if args.ground_truth == 'fine' else '20')
     else:
-        test(selected_model, args.model_path, batch_size=args.batch_size)
+        test(Net, args.model_path, batch_size=args.batch_size, class_type='100' if args.ground_truth == 'fine' else '20')
