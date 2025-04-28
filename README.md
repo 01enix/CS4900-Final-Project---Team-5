@@ -37,7 +37,7 @@ NOTE: CIFAR-100 dataset will automatically be downloaded into the working direct
    
    NOTE: This program was designed to run on Windows but will work with other OS but LI commands may vary.
 
-   -cd to the path of the project file
+   -change the working directory to the path of the project file
    
    ![image](https://github.com/user-attachments/assets/718ef8d5-c952-4020-83dc-432f82c60b0e)
 
