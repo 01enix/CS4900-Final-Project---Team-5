@@ -67,7 +67,7 @@ NOTE: CIFAR-100 dataset will automatically be downloaded into the working direct
   
     view the logs using the CLI TensorBoard command (optional)
     
-    ![image](https://github.com/user-attachments/assets/08ac29f8-86a6-471e-bbbe-1e3b45616259)
+  ![image](https://github.com/user-attachments/assets/08ac29f8-86a6-471e-bbbe-1e3b45616259)
 
 5. Testing and Evaluating a Model
    
