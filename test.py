@@ -116,7 +116,7 @@ def get_test_loader(batch=64, class_type='100'):
     """
 
     # Define the preprocessing pipeline matching your training
-    transform_pipeline = tv_transforms.Compose([tv_transforms.ToTensor(), tv_transforms.Normalize(mean=[0.5071, 0.4865, 0.4409], std=[0.2673, 0.2564, 0.2762])])
+    transform_pipeline = tv_transforms.Compose([tv_transforms.ToTensor()])
 
     # Load CIFAR-100 dataset
     cifar_data = torchvision.datasets.CIFAR100(root='./data', train=False)
