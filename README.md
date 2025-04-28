@@ -24,22 +24,28 @@ NOTE: CIFAR-100 dataset will automatically be downloaded into the working direct
 
 # --Execution Instructions--
 1. Prepare CIFAR-100 dataset
-   -Make sure the CIFAR-100 dataset files (meta, train, test) are inside (project path)/data/cifar-100-python/
-   NOTE: If the CIFAR-100 dataset is not found it will be downloaded upon execution of train.py
    
+   -Make sure the CIFAR-100 dataset files (meta, train, test) are inside (project path)/data/cifar-100-python/
+
+   NOTE: If the CIFAR-100 dataset is not found it will be downloaded upon execution of train.py
+
 2. Generate 32 x 32. png images for GUI implementation using the following code: https://gist.github.com/ahanagemini/aad2fc08913fe20a0ba9b137b3a1944b
+
    NOTE: Using any other images may result in improper GUI output.
    
 3. Open Command Line Interface/Bash
+   
    NOTE: This program was designed to run on Windows but will work with other OS but LI commands may vary.
+
    -cd to the path of the project file
    
    ![image](https://github.com/user-attachments/assets/718ef8d5-c952-4020-83dc-432f82c60b0e)
 
    
-5. Training a Model
+4. Training a Model
    
   -Train a CNN (Net) or LinearNet on fine or coarse labels
+  
    NOTE: model is trained using a 20/80 training set to validation set ratio
    
    ![image](https://github.com/user-attachments/assets/26f8a866-3dfc-4db6-9fc9-5e99631bdb0d)
