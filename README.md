@@ -14,12 +14,13 @@ Install packages:
 ![image](https://github.com/user-attachments/assets/6d8dd32a-bb51-474e-ac5e-5e8f0395b40e)
 
 NOTE: CIFAR-100 dataset will automatically be downloaded into the working directory if not already installed upon executing train.py 
+
 *CIFAR-100 dataset:(https://www.cs.toronto.edu/~kriz/cifar.html)
   -Download and place the extracted files (meta, train, test) inside a ./data folder within the project file
 
 (Optional (for monitoring training):
 
-TensorBoard
+*TensorBoard
 
 # --Execution Instructions--
 1. Prepare CIFAR-100 dataset
