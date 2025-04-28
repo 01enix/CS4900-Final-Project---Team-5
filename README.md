@@ -46,7 +46,6 @@ NOTE: CIFAR-100 dataset will automatically be downloaded into the working direct
    
   -Train a CNN (Net) or LinearNet on fine or coarse labels
   
-   NOTE: model is trained using a 20/80 training set to validation set ratio
    
    ![image](https://github.com/user-attachments/assets/26f8a866-3dfc-4db6-9fc9-5e99631bdb0d)
 
