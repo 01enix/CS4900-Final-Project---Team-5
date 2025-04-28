@@ -7,42 +7,42 @@ A command-line interface operation for training, testing, and evaluation of the 
 And a Tkinter-based GUI for interactive image classification.
 
 # --Requirements--
-*Python 3.7+ https://www.python.org/downloads/
+### *Python 3.7+ https://www.python.org/downloads/
 
 Install packages:
 
 ![image](https://github.com/user-attachments/assets/6d8dd32a-bb51-474e-ac5e-5e8f0395b40e)
 
-NOTE: CIFAR-100 dataset will automatically be downloaded into the working directory if not already installed upon executing train.py 
+### NOTE: CIFAR-100 dataset will automatically be downloaded into the working directory if not already installed upon executing train.py 
 
-*CIFAR-100 dataset:(https://www.cs.toronto.edu/~kriz/cifar.html)
+### *CIFAR-100 dataset:(https://www.cs.toronto.edu/~kriz/cifar.html)
   -Download and place the extracted files (meta, train, test) inside a ./data folder within the project file
 
 (Optional (for monitoring training):
 
-*TensorBoard
+### *TensorBoard
 
 # --Execution Instructions--
-1. Prepare CIFAR-100 dataset
+## 1. Prepare CIFAR-100 dataset
    
    -Make sure the CIFAR-100 dataset files (meta, train, test) are inside (project path)/data/cifar-100-python/
 
-   NOTE: If the CIFAR-100 dataset is not found it will be downloaded upon execution of train.py
+   ### NOTE: If the CIFAR-100 dataset is not found it will be downloaded upon execution of train.py
 
-2. Generate 32 x 32. png images for GUI implementation using the following code: https://gist.github.com/ahanagemini/aad2fc08913fe20a0ba9b137b3a1944b
+## 2. Generate 32 x 32. png images for GUI implementation using the following code: https://gist.github.com/ahanagemini/aad2fc08913fe20a0ba9b137b3a1944b
 
-   NOTE: Using any other images may result in improper GUI output.
+   ### NOTE: Using any other images may result in improper GUI output.
    
-3. Open Command Line Interface/Bash
+## 3. Open Command Line Interface/Bash
    
-   NOTE: This program was designed to run on Windows but will work with other OS but LI commands may vary.
+   ### NOTE: This program was designed to run on Windows but will work with other OS but LI commands may vary.
 
    -change the working directory to the path of the project file
    
    ![image](https://github.com/user-attachments/assets/718ef8d5-c952-4020-83dc-432f82c60b0e)
 
    
-4. Training a Model
+## 4. Training a Model
    
   -Train a CNN (Net) or LinearNet on fine or coarse labels
   
@@ -59,17 +59,17 @@ NOTE: CIFAR-100 dataset will automatically be downloaded into the working direct
     
     --class_type: 100 (fine labels) or 20 (coarse labels)
     
-  NOTE: The trained model is saved automatically within the project folder in the format:
+  ### NOTE: The trained model is saved automatically within the project folder in the format:
   
     <model_name>_<dataset>_<timestamp>.pth
     
-  NOTE: Training logs are saved inside the "runs/" folder as within the project folder:
+  ### NOTE: Training logs are saved inside the "runs/" folder as within the project folder:
   
     view the logs using the CLI TensorBoard command (optional)
     
   ![image](https://github.com/user-attachments/assets/08ac29f8-86a6-471e-bbbe-1e3b45616259)
 
-5. Testing and Evaluating a Model
+## 5. Testing and Evaluating a Model
    
   -Evaluate a saved model on CIFAR-100 test set:
   
@@ -96,7 +96,7 @@ NOTE: CIFAR-100 dataset will automatically be downloaded into the working direct
     
     -Superclass metrics if using class_type 20
     
-6. GUI-Based Single Image Prediction
+## 6. GUI-Based Single Image Prediction
    
   -Launch the GUI and predict classes for a single image:
   
