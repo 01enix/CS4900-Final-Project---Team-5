@@ -116,7 +116,7 @@ def get_test_loader(batch=64, class_type='100'):
     """
 
     # Define the preprocessing pipeline matching your training
-    transform_pipeline = tv_transforms.Compose([tv_transforms.ToTensor()])
+    transform_pipeline = tv_transforms.Compose([tv_transforms.ToTensor(), tv_transforms.Normalize(mean=[0.5071, 0.4865, 0.4409], std=[0.2673, 0.2564, 0.2762])])
 
     # Load CIFAR-100 dataset
     cifar_data = torchvision.datasets.CIFAR100(root='./data', train=False)
@@ -262,40 +262,6 @@ def model_loader(model_name, model_path, ground_truth):
     model.eval()
     return model
 
-def predict_images(model, model_path, image_directory, class_type='100'):
-    """
-    Run inference on a set of images in a directory using the specified model.
-
-    Args:
-        model: the CNN model to use for prediction.
-        model_path: path to the trained model.
-        image_directory: directory containing images to predict.
-        class_type: '100' for fine labels, '20' for superclasses.
-    """
-
-    num_classes = 100 if class_type == '100' else 20
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    net = model(num_classes=100).to(device)
-    net.load_state_dict(torch.load(model_path, map_location=device))
-    net.eval()
-
-
-    print(f"\nPredicting on images in '{image_directory}' using class type {class_type} ({num_classes} classes)...\n")
-        
-    for image_name in os.listdir(image_directory):
-        image_path = os.path.join(image_directory, image_name)
-        try:
-            image = Image.open(image_path).convert("RGB")
-            input_tensor = transform_pipeline(image).unsqueeze(0).to(device)
-            with torch.no_grad():
-                output = net(input_tensor)
-            predicted_class = output.argmax(dim=1).item()
-            class_label = class_names[predicted_class] if predicted_class < len(class_names) else "Unknown"
-            print(f"Image: {image_name} - Predicted Class: {predicted_class} ({class_label})")
-        except Exception as e:
-            print(f"[ERROR] Could not process image '{image_name}': {e}")
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', type=str, default='Net', help='Choose model: Net, LinearNet, etc. (default: Net)')
@@ -307,8 +273,4 @@ if __name__ == '__main__':
 
     model = model_loader(args.model, args.model_path, args.ground_truth)
 
-    # If an image directory is provided, run image predictions; otherwise, run CIFAR-100 tests.
-    if args.image_directory:
-        predict_images(model, args.model_path, args.image_directory, class_type='100' if args.ground_truth == 'fine' else '20')
-    else:
-        test(Net, args.model_path, batch_size=args.batch_size, class_type='100' if args.ground_truth == 'fine' else '20')
+test(Net, args.model_path, batch_size=args.batch_size, class_type='100' if args.ground_truth == 'fine' else '20')
