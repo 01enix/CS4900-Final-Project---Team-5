@@ -2,7 +2,7 @@
 This project provides a full solution for classifying images using a Convolutional Neural Network (CNN) or a Linear Neural Network on the CIFAR-100 dataset.
 It includes both:
 
-A command-line interface operation for training, testing and evaluation,
+A command-line interface operation for training, testing, and evaluation of the selected model,
 
 And a Tkinter-based GUI for interactive image classification.
 
@@ -13,7 +13,7 @@ Install packages:
 
 ![image](https://github.com/user-attachments/assets/6d8dd32a-bb51-474e-ac5e-5e8f0395b40e)
 
-NOTE: CIFAR-100 dataset will automatically be downloaded into wthe orking directory if not already installed upon executing train.py 
+NOTE: CIFAR-100 dataset will automatically be downloaded into the working directory if not already installed upon executing train.py 
 *CIFAR-100 dataset:(https://www.cs.toronto.edu/~kriz/cifar.html)
   -Download and place the extracted files (meta, train, test) inside a ./data folder within the project file
 
