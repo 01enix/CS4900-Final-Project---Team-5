@@ -29,7 +29,9 @@ Install packages:
 
    ### NOTE: If the CIFAR-100 dataset is not found it will be downloaded upon execution of train.py
 
-## 2. Generate 32 x 32. png images for GUI implementation using the following code: https://gist.github.com/ahanagemini/aad2fc08913fe20a0ba9b137b3a1944b
+## 2. Generate 32 x 32. png images for GUI implementation using the following code
+
+  https://gist.github.com/ahanagemini/aad2fc08913fe20a0ba9b137b3a1944b
 
    ### NOTE: Using any other images may result in improper GUI output.
    
