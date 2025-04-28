@@ -164,7 +164,7 @@ def test(model, model_path, batch_size=64, class_type='100'):
     correct_pred = {classname: 0 for classname in range(num_classes)}
     total_pred = {classname: 0 for classname in range(num_classes)}
 
-    with torch.no_grad():
+    with torch.no_grad():  #model ran twice --remove
         for inputs, labels in test_loader:
             inputs, labels = inputs.to(device), labels.to(device)
             outputs = net(inputs)
