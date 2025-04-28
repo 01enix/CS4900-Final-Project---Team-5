@@ -37,7 +37,7 @@ Install packages:
    
 ## 3. Open Command Line Interface/Bash
    
-   ### NOTE: This program was designed to run on Windows but will work with other OS but LI commands may vary.
+   ### NOTE: This program was designed to run on Windows but will work with other OS but commands may vary.
 
    -change the working directory to the path of the project file
    
