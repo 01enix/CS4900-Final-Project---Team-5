@@ -65,7 +65,7 @@ NOTE: CIFAR-100 dataset will automatically be downloaded into the working direct
     
   NOTE: Training logs are saved inside the "runs/" folder as within the project folder:
   
-    view the logs using the CLI TensorBoard command (optional):
+    view the logs using the CLI TensorBoard command (optional)
     
     ![image](https://github.com/user-attachments/assets/08ac29f8-86a6-471e-bbbe-1e3b45616259)
 
