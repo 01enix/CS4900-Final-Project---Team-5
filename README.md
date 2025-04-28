@@ -50,6 +50,7 @@ NOTE: CIFAR-100 dataset will automatically be downloaded into the working direct
    ![image](https://github.com/user-attachments/assets/26f8a866-3dfc-4db6-9fc9-5e99631bdb0d)
 
   Arguments:
+  
     --model: Net or LinearNet
     
     --epochs: Number of training epochs (default 20)
@@ -74,6 +75,7 @@ NOTE: CIFAR-100 dataset will automatically be downloaded into the working direct
 
 
    Arguments:
+   
     --model: Net or LinearNet
     
     --model_path: Path to the saved .pth model
@@ -83,9 +85,13 @@ NOTE: CIFAR-100 dataset will automatically be downloaded into the working direct
     --class_type: 100 (fine labels) or 20 (coarse labels)
    
   Outputs:
+  
     -Overall test accuracy
+    
     -Per-class precision, recall, F1-scores
+    
     -Mean accuracy over all classes
+    
     -Superclass metrics if using class_type 20
     
 6. GUI-Based Single Image Prediction
