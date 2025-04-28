@@ -51,8 +51,11 @@ NOTE: CIFAR-100 dataset will automatically be downloaded into the working direct
 
   Arguments:
     --model: Net or LinearNet
+    
     --epochs: Number of training epochs (default 20)
+    
     --lr: Learning rate (default 0.001)
+    
     --class_type: 100 (fine labels) or 20 (coarse labels)
     
   NOTE: The trained model is saved automatically within the project folder in the format:
@@ -72,8 +75,11 @@ NOTE: CIFAR-100 dataset will automatically be downloaded into the working direct
 
    Arguments:
     --model: Net or LinearNet
+    
     --model_path: Path to the saved .pth model
+    
     --batch_size: Testing batch size (default 64)
+    
     --class_type: 100 (fine labels) or 20 (coarse labels)
    
   Outputs:
