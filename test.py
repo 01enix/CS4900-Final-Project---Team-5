@@ -164,6 +164,9 @@ def test(model, model_path, batch_size=64, class_type='100'):
     correct_pred = {classname: 0 for classname in range(num_classes)}
     total_pred = {classname: 0 for classname in range(num_classes)}
 
+    y_true = []
+    y_pred = []
+
     with torch.no_grad():  #model ran twice --remove
         for inputs, labels in test_loader:
             inputs, labels = inputs.to(device), labels.to(device)
@@ -175,6 +178,9 @@ def test(model, model_path, batch_size=64, class_type='100'):
             for label, prediction in zip(labels, predicted):
                 correct_pred[label.item()] += (label == prediction).item()
                 total_pred[label.item()] += 1
+
+            y_true.extend(labels.cpu().numpy())
+            y_pred.extend(predicted.cpu().numpy())
 
     accuracy = 100 * correct / total
     print(f'Accuracy on the 10000 test images: {accuracy:.2f}%')
@@ -189,17 +195,6 @@ def test(model, model_path, batch_size=64, class_type='100'):
     mean_accuracy = sum(class_accuracies) / len(class_accuracies)
     print(f'Mean Accuracy across all classes: {mean_accuracy:.2f}%')
 
-    #Compute Precision, Recall, F1-score 
-    y_true = []
-    y_pred = []
-
-    with torch.no_grad():
-        for inputs, labels in test_loader:
-            inputs, labels = inputs.to(device), labels.to(device)
-            outputs = net(inputs)
-            _, predicted = torch.max(outputs, 1)
-            y_true.extend(labels.cpu().numpy())
-            y_pred.extend(predicted.cpu().numpy())
 
     #metric calculation
     precision = precision_score(y_true, y_pred, average=None, labels=range(100))
