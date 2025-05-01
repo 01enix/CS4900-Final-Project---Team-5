@@ -1,6 +1,7 @@
 import argparse
 import torch
 import torchvision
+import torchvision transform as T
 from torch.utils.data import DataLoader
 from sklearn.metrics import precision_score, recall_score, f1_score
 from model import Net
@@ -20,8 +21,8 @@ def get_test_loader(batch_size, class_type):
         tuple: (DataLoader, class_names list, dataset object)
     """
     
-    transform = torchvision.transforms.Compose([
-        torchvision.transforms.ToTensor(),
+    transform = T.Compose([
+    T.ToTensor()
     ])
 
     if class_type == '100':
