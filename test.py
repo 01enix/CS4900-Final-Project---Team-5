@@ -55,12 +55,12 @@ def get_test_loader(batch_size, class_type):
     return DataLoader(dataset, batch_size=batch_size, shuffle=False), class_names, dataset
 
 
-def test(model_cls, model_path, batch_size=64, class_type='100'):
+def test(model, model_path, batch_size=64, class_type='100'):
     """
     Evaluates a trained model on the CIFAR-100 test set using fine or coarse labels.
 
     Args:
-        model_cls (nn.Module): Model class (e.g., Net or LinearNet).
+        model (nn.Module): Model( Net or LinearNet).
         model_path (str): Path to the trained model's .pth file.
         batch_size (int): Batch size for test data.
         class_type (str): '100' for fine labels or '20' for coarse labels.
@@ -157,4 +157,4 @@ if __name__ == '__main__':
     
     class_type = '100' if args.ground_truth == 'fine' else '20'
 
-    test(model_class, args.model_path, args.batch_size, class_type)
+    test(selected_model, args.model_path, args.batch_size, class_type)
