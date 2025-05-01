@@ -72,7 +72,7 @@ def test(model, model_path, batch_size=64, class_type='100'):
     num_classes = len(class_names)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = model_cls(num_classes=num_classes).to(device)
+    model = model(num_classes=num_classes).to(device)
     model.load_state_dict(torch.load(model_path, map_location=device))
     model.eval()
 
