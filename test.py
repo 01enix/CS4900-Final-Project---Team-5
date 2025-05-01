@@ -144,9 +144,17 @@ if __name__ == '__main__':
     parser.add_argument('--model_path', type=str, required=True, help='Path to saved .pth model')
     parser.add_argument('--batch_size', type=int, default=64, help='Batch size for test DataLoader')
     parser.add_argument('--ground_truth', type=str, choices=['fine', 'coarse'], default='fine', help='Type of label to evaluate on')
+    parser.add_argument('--model', type=str, default='Net', help='Choose model: Net or LinearNet(default: Net)')
     args = parser.parse_args()
-
-    model_class = LinearNet if 'linear' in args.model_path.lower() else Net
+    
+    # turn string into model class
+    if args.model.lower() == 'net':
+        selected_model = Net
+    elif args.model.lower() == 'linearnet':
+        selected_model = LinearNet
+    else:
+        raise ValueError("Model must be 'Net' or 'LinearNet'")
+    
     class_type = '100' if args.ground_truth == 'fine' else '20'
 
     test(model_class, args.model_path, args.batch_size, class_type)
