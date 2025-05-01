@@ -1,7 +1,7 @@
 import argparse
 import torch
 import torchvision
-import torchvision.transform as T
+import torchvision.transforms as T
 from torch.utils.data import DataLoader
 from sklearn.metrics import precision_score, recall_score, f1_score
 from model import Net
