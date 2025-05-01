@@ -80,13 +80,11 @@ Install packages:
 
    Arguments:
    
-    --model: Net or LinearNet
-    
     --model_path: Path to the saved .pth model
     
     --batch_size: Testing batch size (default 64)
     
-    --class_type: 100 (fine labels) or 20 (coarse labels)
+    --ground_truth: 100 (fine labels) or 20 (coarse labels)
    
   Outputs:
   
