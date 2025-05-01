@@ -8,8 +8,7 @@ from model import Net
 from linearModel import LinearNet
 
 def get_test_loader(batch_size, class_type):
-    
-     """
+    """
     Loads and returns the CIFAR-100 test set DataLoader, class names, and dataset object
     for either fine (100 classes) or coarse (20 superclasses) classification.
 
@@ -20,9 +19,8 @@ def get_test_loader(batch_size, class_type):
     Returns:
         tuple: (DataLoader, class_names list, dataset object)
     """
-    
     transform = T.Compose([
-    T.ToTensor()
+        T.ToTensor()
     ])
 
     if class_type == '100':
