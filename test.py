@@ -132,6 +132,9 @@ def test(model, model_path, batch_size=64, class_type='100'):
     for cid in range(20):
         cname = COARSE_LABEL_NAMES[cid]
         print(f"{cname:25} | P: {precision_c[cid]:.2f}, R: {recall_c[cid]:.2f}, F1: {f1_c[cid]:.2f}")
+    
+    mean_acc = acc_per_class.mean()
+    print(f"\nMean Per-Superclass Accuracy: {mean_acc:.2f}%")    
 
     print("\nSuperclass Macro Averages:")
     print(f"Precision: {precision_score(y_true_coarse, y_pred_coarse, average='macro'):.4f}")
