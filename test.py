@@ -85,10 +85,6 @@ def test(model, model_path, batch_size=64, class_type='100'):
             y_pred.extend(predicted.cpu().tolist())
             y_true.extend(labels.cpu().tolist())
 
-    # Overall accuracy
-    accuracy = 100 * sum(p == t for p, t in zip(y_pred, y_true)) / len(y_true)
-    print(f"\nOverall Accuracy: {accuracy:.2f}%")
-
     y_true_tensor = torch.tensor(y_true)
     y_pred_tensor = torch.tensor(y_pred)
 
@@ -104,9 +100,24 @@ def test(model, model_path, batch_size=64, class_type='100'):
                 correct_per_class[label] += 1
 
         acc_per_class = (correct_per_class / total_per_class.clamp(min=1)) * 100
-        print("\nPer-class Accuracy:")
+        mean_acc = acc_per_class.mean()
+        print(f"\nFine Label Mean Accuracy: {mean_acc:.2f}%")
+        
+        precision_pc = precision_score(y_true, y_pred, average=None, labels=range(num_classes))
+        recall_pc = recall_score(y_true, y_pred, average=None, labels=range(num_classes))
+        f1_pc = f1_score(y_true, y_pred, average=None, labels=range(num_classes))
+        print("\nPer-Class Accuracy(A), Precision (P), Recall(R), F1(F):")
+
+        # For easier readability added columns and rows for the CLI output
+        columns = 4  
+        row = ""
         for i in range(num_classes):
-            print(f"Class {i:02d}: {acc_per_class[i]:.2f}%")
+            row += f"Class {i:02d} | A:{acc_per_class[i]:.2f}% P:{precision_pc[i]:.2f} R:{recall_pc[i]:.2f} F1:{f1_pc[i]:.2f}    "
+            if (i + 1) % columns == 0:
+                print(row)
+                row = ""
+        if row:  # print any remaining classes that didn't fill a full row
+            print(row)
 
         precision = precision_score(y_true, y_pred, average='macro')
         recall = recall_score(y_true, y_pred, average='macro')
@@ -123,13 +134,25 @@ def test(model, model_path, batch_size=64, class_type='100'):
         y_true_coarse = dataset.coarse_labels
         y_pred_coarse = [dataset.coarse_labels[i] for i in y_pred]
 
-    print("\nSuperclass Precision, Recall, F1:")
+    correct_per_super = torch.zeros(20)
+    total_per_super = torch.zeros(20)
+    for t, p in zip(y_true_coarse, y_pred_coarse):
+        total_per_super[t] += 1
+        if t == p:
+            correct_per_super[t] += 1
+    
+    acc_per_super = (correct_per_super / total_per_super.clamp(min=1)) * 100
+    mean_acc_super = acc_per_super.mean()
+    print(f"\nSuperclass Mean Accuracy: {mean_acc_super:.2f}%")
+    
     precision_c = precision_score(y_true_coarse, y_pred_coarse, average=None, labels=range(20))
     recall_c = recall_score(y_true_coarse, y_pred_coarse, average=None, labels=range(20))
     f1_c = f1_score(y_true_coarse, y_pred_coarse, average=None, labels=range(20))
+       
+    print("\nPer-Superclass Accuracy (A), Precision (P), Recall (R), F1 (F):")
     for cid in range(20):
         cname = COARSE_LABEL_NAMES[cid]
-        print(f"{cname:25} | P: {precision_c[cid]:.2f}, R: {recall_c[cid]:.2f}, F1: {f1_c[cid]:.2f}")
+        print(f"{cname:25} | A: {acc_per_super[cid]:.2f}%, P: {precision_c[cid]:.2f}, R: {recall_c[cid]:.2f}, F1: {f1_c[cid]:.2f}")
     
 
     print("\nSuperclass Macro Averages:")
