@@ -80,6 +80,8 @@ Install packages:
 
    Arguments:
    
+    --model: Net or Linearnet
+    
     --model_path: Path to the saved .pth model
     
     --batch_size: Testing batch size (default 64)
