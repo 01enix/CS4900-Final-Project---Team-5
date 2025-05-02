@@ -107,8 +107,6 @@ def test(model, model_path, batch_size=64, class_type='100'):
         print("\nPer-class Accuracy:")
         for i in range(num_classes):
             print(f"Class {i:02d}: {acc_per_class[i]:.2f}%")
-        mean_acc = acc_per_class.mean()
-        print(f"\nMean Per-Class Accuracy: {mean_acc:.2f}%")
 
         precision = precision_score(y_true, y_pred, average='macro')
         recall = recall_score(y_true, y_pred, average='macro')
