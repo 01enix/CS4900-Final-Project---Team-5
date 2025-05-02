@@ -65,9 +65,9 @@ Install packages:
   
     <model_name>_<dataset>_<timestamp>.pth
     
-  ### NOTE: Training logs are saved inside the "runs/" folder as within the project folder:
+  ### NOTE: Training logs are saved inside the "runs/" folder as within the project folder.
   
-    view the logs using the CLI TensorBoard command (optional)
+    To view the logs use the CLI TensorBoard command (optional)
     
   ![image](https://github.com/user-attachments/assets/08ac29f8-86a6-471e-bbbe-1e3b45616259)
 
