@@ -67,7 +67,7 @@ Install packages:
     
   ### NOTE: Training logs are saved inside the "runs/" folder as within the project folder.
   
-    To view the logs use the CLI TensorBoard command (optional)
+  -View the logs use the CLI TensorBoard command (optional)
     
   ![image](https://github.com/user-attachments/assets/08ac29f8-86a6-471e-bbbe-1e3b45616259)
 
