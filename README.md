@@ -75,7 +75,8 @@ Install packages:
    
   -Evaluate a saved model on CIFAR-100 test set:
   
-  ![image](https://github.com/user-attachments/assets/e161e665-a2ae-4b9e-bf80-f85db218855c)
+  ![image](https://github.com/user-attachments/assets/8e503f7c-c023-4068-ab5a-925e1d153ddc)
+
 
 
    Arguments:
